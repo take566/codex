@@ -33,6 +33,7 @@ use codex_protocol::config_types::ReasoningEffort;
 use codex_protocol::config_types::ReasoningSummary;
 use codex_protocol::config_types::SandboxMode;
 use codex_protocol::config_types::Verbosity;
+use codex_rmcp_client::OAuthCredentialsStore;
 use dirs::home_dir;
 use serde::Deserialize;
 use std::collections::BTreeMap;
@@ -141,6 +142,9 @@ pub struct Config {
 
     /// Definition for MCP servers that Codex can reach out to for tool calls.
     pub mcp_servers: HashMap<String, McpServerConfig>,
+
+    /// Preferred backend for storing MCP OAuth credentials.
+    pub mcp_oauth_credentials_store: OAuthCredentialsStore,
 
     /// Combined provider map (defaults merged with user-defined overrides).
     pub model_providers: HashMap<String, ModelProviderInfo>,
@@ -668,6 +672,9 @@ pub struct ConfigToml {
     #[serde(default)]
     pub mcp_servers: HashMap<String, McpServerConfig>,
 
+    /// Preferred backend for storing MCP OAuth credentials.
+    pub mcp_oauth_credentials_store: Option<OAuthCredentialsStore>,
+
     /// User-defined provider entries that extend/override the built-in list.
     #[serde(default)]
     pub model_providers: HashMap<String, ModelProviderInfo>,
@@ -1044,6 +1051,7 @@ impl Config {
             user_instructions,
             base_instructions,
             mcp_servers: cfg.mcp_servers,
+            mcp_oauth_credentials_store: cfg.mcp_oauth_credentials_store.unwrap_or_default(),
             model_providers,
             project_doc_max_bytes: cfg.project_doc_max_bytes.unwrap_or(PROJECT_DOC_MAX_BYTES),
             project_doc_fallback_filenames: cfg
@@ -1863,6 +1871,7 @@ model_verbosity = "high"
                 notify: None,
                 cwd: fixture.cwd(),
                 mcp_servers: HashMap::new(),
+                mcp_oauth_credentials_store: Default::default(),
                 model_providers: fixture.model_provider_map.clone(),
                 project_doc_max_bytes: PROJECT_DOC_MAX_BYTES,
                 project_doc_fallback_filenames: Vec::new(),
@@ -1924,6 +1933,7 @@ model_verbosity = "high"
             notify: None,
             cwd: fixture.cwd(),
             mcp_servers: HashMap::new(),
+            mcp_oauth_credentials_store: Default::default(),
             model_providers: fixture.model_provider_map.clone(),
             project_doc_max_bytes: PROJECT_DOC_MAX_BYTES,
             project_doc_fallback_filenames: Vec::new(),
@@ -2000,6 +2010,7 @@ model_verbosity = "high"
             notify: None,
             cwd: fixture.cwd(),
             mcp_servers: HashMap::new(),
+            mcp_oauth_credentials_store: Default::default(),
             model_providers: fixture.model_provider_map.clone(),
             project_doc_max_bytes: PROJECT_DOC_MAX_BYTES,
             project_doc_fallback_filenames: Vec::new(),
@@ -2062,6 +2073,7 @@ model_verbosity = "high"
             notify: None,
             cwd: fixture.cwd(),
             mcp_servers: HashMap::new(),
+            mcp_oauth_credentials_store: Default::default(),
             model_providers: fixture.model_provider_map.clone(),
             project_doc_max_bytes: PROJECT_DOC_MAX_BYTES,
             project_doc_fallback_filenames: Vec::new(),
