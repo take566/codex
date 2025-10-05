@@ -119,7 +119,7 @@ pub(crate) fn spinner(start_time: Option<Instant>) -> Span<'static> {
     let blink_on = start_time
         .map(|st| ((st.elapsed().as_millis() / 600) % 2) == 0)
         .unwrap_or(false);
-    if blink_on { "•".into() } else { "•".dim() }
+    if blink_on { "•".into() } else { "◦".dim() }
 }
 
 impl HistoryCell for ExecCell {
